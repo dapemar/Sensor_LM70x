@@ -1,1 +1,1 @@
-# Sensor_LM70x
+# Sensor_M70x
