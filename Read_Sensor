@@ -1,0 +1,180 @@
+void setup() {
+Serial.begin(9600);
+  Serial1.begin(9600);
+}
+// int i = 0;
+int C02H;
+int C02L;
+
+int formaldehydeH;
+int formaldehydeL;
+
+int TVOCH;
+int TVOCL;
+
+int PM25H;
+int PM25L;
+
+int PM10H;
+int PM10L;
+
+int TempH;
+int TempL;
+
+int HumdH;
+int HumdL;
+int myval;
+
+String combineTwoIntIntoOneString(byte value1,byte value2){
+    String string1 = String(value1);
+    String string2 = String(value2);
+    String string3;
+    string3 = string1 + "," + string2;
+    //Serial.println(string1);
+    //Serial.println(string2);
+    //Serial.println(string3);
+    String y;
+    //char *endptr;
+    y = string3;
+    // Serial.println(x / 10, 2);
+  return  y;
+}
+int combineTwoHexIntoOneInt(byte value1,byte value2){
+    String string1 = String(value1, HEX);
+    String string2 = String(value2, HEX);
+    String string3;
+    long int li1;
+    long int li2;
+    long int y;
+    char *endptr;
+    li1 = strtol(string1.c_str(), &endptr, 16);
+    li2 = strtol(string2.c_str(), &endptr, 16);
+    //string3 = string4 + string2;
+
+
+    y = (li1*256)+li2;
+    // Serial.println(x / 10, 2);
+  return y;
+}
+void parseDataStream(byte X, int i) {
+  if (i == 2) {
+    C02H = X;
+  }
+  if (i == 3) {
+    C02L = X;
+    // Serial.print("C02 HEX Value:  ");
+    // Serial.print(C02H, HEX);
+    // Serial.print(" ");
+    // Serial.println(C02L, HEX);
+    Serial.print("C02          :  ");
+    Serial.println(combineTwoHexIntoOneInt(C02H,C02L));
+  }
+  if (i == 4) {
+    formaldehydeH = X;
+  }
+  if (i == 5) {
+    formaldehydeL = X;
+    // Serial.print("FormaldehydeH HEX Value:  ");
+    // Serial.print(formaldehydeH, HEX);
+    // Serial.print(" ");
+    // Serial.println(formaldehydeL, HEX);
+    Serial.print("Formaldehyde :  ");
+    // Serial.println(formaldehydeH * 256 + formaldehydeL);
+    Serial.println(combineTwoHexIntoOneInt(formaldehydeH,formaldehydeL));
+
+    
+  }
+  if (i == 6) {
+    TVOCH = X;
+  }
+  if (i == 7) {
+    TVOCL = X;
+    // Serial.print("TVOC HEX Value:  ");
+    // Serial.print(TVOCH, HEX);
+    // Serial.print(" ");
+    // Serial.println(TVOCL, HEX);
+    Serial.print("TVOC         :  ");
+    // Serial.println(TVOCH * 256 + TVOCL);
+    Serial.println(combineTwoHexIntoOneInt(TVOCH,TVOCL));
+
+  }
+  if (i == 8) {
+    PM25H = X;
+  }
+  if (i == 9) {
+    PM25L = X;
+    // Serial.print("PM2.5 HEX Value:  ");
+    // Serial.print(PM25H, HEX);
+    // Serial.print(" ");
+    // Serial.println(PM25L, HEX);
+    Serial.print("PM2.5        :  ");
+    // Serial.println(PM25H * 256 + PM25L);
+    Serial.println(combineTwoHexIntoOneInt(PM25H,PM25L));
+
+  }
+  if (i == 10) {
+    PM10H = X;
+  }
+  if (i == 11) {
+    PM10L = X;
+    // Serial.print("PM10 HEX Value:  ");
+    // Serial.print(PM10H, HEX);
+    // Serial.print(" ");
+    // Serial.println(PM10L, HEX);
+    Serial.print("PM10         :  ");
+    // Serial.println(PM10H * 256 + PM10L);
+    Serial.println(combineTwoHexIntoOneInt(PM10H,PM10L));
+
+  }
+
+  if (i == 12) {
+    TempH = X;
+  }
+  if (i == 13) {
+    TempL = X;
+    //Serial.print("temph");
+    //Serial.println(TempH);
+    //Serial.print("templ");
+    //Serial.println(TempL);
+    // Serial.print("Temperature HEX Value:  ");
+    // Serial.print(TempH, HEX);
+    // Serial.print(" ");
+    // Serial.println(TempL, HEX);
+    Serial.print("Temperature  :  ");
+    // Serial.println((TempH * 256 + TempL));
+    Serial.println(combineTwoIntIntoOneString(TempH,TempL));
+    
+    //For Negative Values, a bit buggy tho
+    // Serial.println((TempH << 8) | TempL);
+
+
+  }
+
+  if (i == 14) {
+    HumdH = X;
+  }
+  if (i == 15) {
+    HumdL = X;
+    // Serial.print("Humidity HEX Value:  ");
+    // Serial.print(HumdH, HEX);
+    // Serial.print(" ");
+    // Serial.println(HumdL, HEX);
+    Serial.print("Humidity     :  ");
+    // Serial.println((HumdH+ HumdL));
+    Serial.println(combineTwoIntIntoOneString(HumdH,HumdL));
+
+  }
+}
+
+void loop() {
+
+  for (int k = 0; k < 17; k++) {
+    while (!Serial1.available())
+      ;  // wait for a character
+    int incomingByte = Serial1.read();
+    // Serial.print(incomingByte,HEX);
+    // Serial.print(' ');
+    parseDataStream(incomingByte, k);
+  }
+  Serial.println();
+}          
